@@ -4,7 +4,7 @@
 			var key = "0AvYMScvV9vpcdE1CZk02YWJ6N29SRnpOUXcya1NzalE";
 			var make_chart = function(data, tabletop) {
 				/* index: 0 - 12
-				 * keys: opponent, date, result, completions, attempts, pass_yards, completion_percent, longest_pass, pass_touchdowns, interceptions, passer_rating, rush_attempts, rush_yards, rush_average, longest_rush, rush_touchdowns
+				 * keys: opponent, date, result, completions, attempts, passyards, completionpercent, longestpass, passtouchdowns, interceptions, passerrating, rushattempts, rushyards, rushaverage, longestrush, rushtouchdowns
 				 */
 				console.log(data);
 				var margin = {
@@ -27,7 +27,6 @@
 				data.forEach(function(d) {
 					d.date = parseDate(d.date);
 					d.passerrating = parseFloat(d.passerrating);
-					console.log(d);
 				});
 				x.domain(d3.extent(data, function(d) {
 					return d.date;
