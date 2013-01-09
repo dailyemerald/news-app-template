@@ -1,0 +1,59 @@
+( function($) {
+
+		var App = function() {
+			var that = {
+
+				init : function() {
+					Tabletop.init({
+						key : "0AvYMScvV9vpcdE1CZk02YWJ6N29SRnpOUXcya1NzalE",
+						callback : that.make_chart,
+						simpleSheet : true
+					});
+				},
+
+				make_chart : function(data) {
+					/* index: 0 - 12
+					 * keys: opponent, date, result, completions, attempts, pass_yards, completion_percent, longest_pass, pass_touchdowns, interceptions, passer_rating, rush_attempts, rush_yards, rush_average, longest_rush, rush_touchdowns
+					 */
+					var margin = {
+						top : 20,
+						right : 20,
+						bottom : 30,
+						left : 50
+					}, width = $(body).width() - margin.left - margin.right, height = $(body).height() - margin.top - margin.bottom;
+					var parseDate = d3.time.format("%d-%b-%y").parse;
+					var x = d3.time.scale().range([0, width]);
+					var y = d3.scale.linear().range([height, 0]);
+					var xAxis = d3.svg.axis().scale(x).orient("bottom");
+					var yAxis = d3.svg.axis().scale(y).orient("left");
+					var line = d3.svg.line().x(function(d) {
+						return x(d.opponent);
+					}).y(function(d) {
+						return y(d.passer_rating);
+					});
+					var svg = d3.select("content").append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+					data.forEach(function(d) {
+						d.date = parseDate(d.date);
+						d.passer_rating = +d.passer_rating;
+					});
+					x.domain(d3.extent(data, function(d) {
+						return d.date;
+					}));
+					y.domain(d3.extent(data, function(d) {
+						return d.passer_rating;
+					}));
+					svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(xAxis);
+					svg.append("g").attr("class", "y axis").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6).attr("dy", ".71em").style("text-anchor", "end").text("Price ($)");
+					svg.append("path").datum(data).attr("class", "line").attr("d", line);
+				}
+			};
+
+			return that;
+		};
+
+		$(document).ready(function() {
+			var app = new App();
+			app.init();
+		});
+
+	}(jQuery))
